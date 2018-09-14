@@ -11,7 +11,7 @@ import { fetchOrders } from '../../store/actions';
 
 class Orders extends Component {
     componentDidMount() {
-        this.props.onFetchOrders(this.props.token);
+        this.props.onFetchOrders(this.props.token, this.props.userId);
     }
 
     render() {
@@ -37,11 +37,12 @@ class Orders extends Component {
 const mapStateToProps = state => ({
     token: state.auth.token,
     orders: state.order.orders,
-    loading: state.order.loading
+    loading: state.order.loading,
+    userId: state.auth.userId
 });
 
 const mapDispatchToProps = dispatch => ({
-    onFetchOrders: (token) => dispatch(fetchOrders(token))
+    onFetchOrders: (token, userId) => dispatch(fetchOrders(token, userId))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(Orders, axios));
