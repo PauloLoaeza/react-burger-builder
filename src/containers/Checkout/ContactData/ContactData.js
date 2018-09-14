@@ -8,6 +8,7 @@ import Input from '../../../components/UI/Input/Input';
 
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import { purchaseBurger } from '../../../store/actions'
+import { updateObject, checkValidity } from '../../../shared/utility';
 
 import classes from './ContactData.css';
 
@@ -96,28 +97,6 @@ class ContactData extends Component {
         formIsValid: false
     }
 
-    checkValidity(value, rules) {
-        let isValid = true;
-
-        if (!rules) {
-            return true;
-        }
-
-        if (rules.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid;
-        }
-
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid;
-        }
-
-        return isValid;
-    }
-
     orderHandler = (event) => {
         event.preventDefault();
 
@@ -137,18 +116,15 @@ class ContactData extends Component {
     }
 
     inputChangeHandler = (event, inputId) => {
-        const updatedForm = {
-            ...this.state.orderForm
-        }
+        const updatedFormElement = updateObject(this.state.orderForm[inputId], {
+            value: event.target.value,
+            valid: checkValidity(event.target.value, this.state.orderForm[inputId].validation),
+            touched: true
+        });
 
-        const updatedFormElement = {
-            ...updatedForm[inputId]
-        }
-
-        updatedFormElement.value = event.target.value;
-        updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
-        updatedFormElement.touched = true;
-        updatedForm[inputId] = updatedFormElement;
+        const updatedForm = updateObject(this.state.orderForm, {
+            [inputId]: updatedFormElement
+        });
 
         let isValidForm = true;
         for (let inputId in updatedForm) {

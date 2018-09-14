@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { auth, setAuthRedirectPath } from '../../store/actions'
 import { Redirect } from 'react-router-dom';
+import { checkValidity } from '../../shared/utility';
 
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
@@ -56,34 +57,12 @@ class Auth extends Component {
             [name]: {
                 ...this.state.controls[name],
                 value: event.target.value,
-                valid: this.checkValidity(event.target.value, this.state.controls[name].validation),
+                valid: checkValidity(event.target.value, this.state.controls[name].validation),
                 touched: true
             }
         };
 
         this.setState({ controls: updatedControls });
-    }
-
-    checkValidity(value, rules) {
-        let isValid = true;
-
-        if (!rules) {
-            return true;
-        }
-
-        if (rules.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid;
-        }
-
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid;
-        }
-
-        return isValid;
     }
 
     submitHandler = (event) => {
